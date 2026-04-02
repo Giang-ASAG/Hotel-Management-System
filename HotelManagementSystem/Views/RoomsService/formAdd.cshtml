@@ -1,0 +1,54 @@
+﻿@model DH52110843_web_quan_ly_khach_san_homestay.DTO.RoomsServiceDTO
+
+@{
+    ViewData["Title"] = "formAdd";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var roomtype = ViewBag.RT as RoomType;
+}
+<div class="container mt-5">
+    @if (TempData["SuccessMessage"] != null)
+    {
+                 <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <h2 class="text-center mb-4 text-primary">Thêm Dịch Vụ Phòng</h2>
+    <form asp-action="addRoomService" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn lưu dịch vụ này không?');">
+        <div class="form-group" style="display: none;">
+            <label asp-for="ServiceId" class="control-label"></label>
+            <input asp-for="ServiceId" class="form-control" readonly="readonly" />
+            <span asp-validation-for="ServiceId" class="text-danger"></span>
+        </div>
+        <!-- Tên dịch vụ -->
+        <div class="form-group mb-3">
+            <label for="ServiceName" class="form-label">Tên dịch vụ</label>
+            <input asp-for="ServiceName" class="form-control" placeholder="Nhập tên dịch vụ" required />
+            <span asp-validation-for="ServiceName" class="text-danger"></span>
+        </div>
+
+        <!-- Room Type -->
+        <div class="form-group mb-3">
+            <label for="RoomTypeId" class="form-label">Loại phòng</label>
+            <input asp-for="RoomTypeId" class="form-control" hidden value="@roomtype.RoomTypeId" />
+            <input class="form-control" value="@roomtype.TypeName" readonly />
+            <span asp-validation-for="ServiceName" class="text-danger"></span>
+        </div>
+@*         <div class="form-group mb-3">
+            <label class="form-label">Loại phòng</label>
+            <select asp-for="RoomTypeId" asp-items="@ViewBag.DSRT" class="form-select"></select>
+            <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+        </div> *@
+
+        <!-- Nút hành động -->
+        <div class="form-actions mt-4 text-center">
+            <button type="submit" class="btn btn-primary me-2">Lưu</button>
+            <a asp-action="Index" asp-route-id="@roomtype.RoomTypeId" class="btn btn-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

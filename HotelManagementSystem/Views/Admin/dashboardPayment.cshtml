@@ -1,0 +1,89 @@
+﻿@model int[]
+@{
+    ViewData["Title"] = "dashboardPayment";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    List<int> a = new List<int>();
+    foreach (var i in Model)
+    {
+        int b = (int)(i * 0.3);
+        a.Add(b);
+    }
+}
+
+<div class="container py-5">
+    <h2 class="mb-4">Doanh thu và lợi nhuận theo tháng</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Tổng doanh thu</h5>
+                        <p class="card-text">@Model.Sum() VND</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Tổng lợi nhuận</h5>
+                        <p class="card-text">@a.Sum() VND</p>
+                    </div>
+                </div>
+            </div>
+    <div class="card">
+        <div class="card-body">
+            <canvas id="groupedChart" height="100"></canvas>
+        </div>
+    </div>
+</div>
+    <a class="btn btn-success mb-3" href="@Url.Action("ExportToExcelAll", "Admin")">
+        Xuất Excel
+    </a>
+
+
+@section Scripts {
+    <script>
+        const ctx = document.getElementById('groupedChart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                datasets: [
+                    {
+                        label: 'Doanh thu',
+                        data: [@Model[0], @Model[1], @Model[2], @Model[3], @Model[4], @Model[5], @Model[6], @Model[7], @Model[8], @Model[9], @Model[10], @Model[11]],
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                    },
+                    {
+                        label: 'Lợi nhuân(ăn 30%)',
+                        data: [@a[0], @a[1], @a[2], @a[3], @a[4], @a[5], @a[6], @a[7], @a[8], @a[9], @a[10], @a[11]],
+                        backgroundColor: 'rgba(255, 159, 64, 0.7)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'So sánh doanh thu từng tháng'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Triệu VND'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
+
+
+

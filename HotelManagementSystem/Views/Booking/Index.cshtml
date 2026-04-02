@@ -1,0 +1,53 @@
+﻿@model IEnumerable<DH52110843_web_quan_ly_khach_san_homestay.Models.Hotel>
+
+@{
+    ViewData["Title"] = "Hotel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container mt-5">
+
+
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        Chọn một khách sạn để xem thông tin đặt phòng.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Tên Khách Sạn</th>
+                    <th>Địa Chỉ</th>
+                    <th>Số hotline</th>
+                    <th>Địa chỉ email</th>
+                    <th>Số sao</th>
+                    <th>Hành động</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.HotelName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                        <td>
+                            @for (int i = 0; i < item.Star; i++)
+                            {
+                                <text>⭐</text>
+                            }
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" asp-route-id="@item.HotelId" asp-action="Bookings">Xem đặt phòng</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

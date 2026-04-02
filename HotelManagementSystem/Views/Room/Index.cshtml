@@ -1,0 +1,126 @@
+﻿@model IEnumerable<DH52110843_web_quan_ly_khach_san_homestay.Models.Room>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var roomtype = ViewBag.RT as RoomType;
+}
+
+<div class="container mt-5">
+    <div class="main">
+        @if (TempData["SuccessMessage"] != null)
+        {
+                     <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <!-- Tiêu đề và nút thêm mới -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+                <a asp-action="Index" asp-controller="RoomType" asp-route-id="@roomtype.HotelId" class="btn btn-secondary">
+                    ← Quay lại
+                </a>
+            </div>
+            <h2 class="page-title m-0">Quản Lý Phòng Khách Sạn</h2>
+            <div>
+                <a asp-action="formAdd" asp-route-id="@roomtype.RoomTypeId">
+                    <button class="btn btn-success">+ Thêm mới</button>
+                </a>
+            </div>
+        </div>
+
+        <!-- Thông báo -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            Đây là danh sách các phòng trong khách sạn.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+        </div>
+
+
+        <!-- Bảng dữ liệu -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Số phòng</th>
+                        <th scope="col">Loại phòng</th>
+                        <th scope="col">Giá (VND)</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Tình trạng</th>
+                        <th scope="col">Sức chứa</th>
+                        <th scope="col">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RoomNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RoomType.TypeName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RoomType.Price)
+                            </td>
+                            <td>
+                                @{
+                                    string status;
+                                    string badgeClass;
+
+                                    if (item.Status)
+                                    {
+                                        status = "Đã đặt";
+                                        badgeClass = "bg-danger"; // Màu đỏ khi đã đặt
+                                    }
+                                    else
+                                    {
+                                        status = "Còn phòng";
+                                        badgeClass = "bg-success"; // Màu xanh khi còn phòng
+                                    }
+                                }
+                                <span class="badge @badgeClass">@status</span>
+                            </td>
+                            <td>
+
+
+                                @(item.Active ? "Hoạt động" : "Bảo trì")@*  Hoat dong = true *@
+                            </td>
+                           
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RoomType.Capacity)
+                            </td>
+
+
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                        Tùy
+                                        Chọn
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-route-id="@item.RoomId" asp-action="formEdit">Chỉnh sửa</a></li>
+                                        <form asp-action="delete" asp-route-RoomTypeId="@item.RoomType.RoomTypeId" asp-route-id="@item.RoomId" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa phòng này?');">
+                                            <input type="hidden" name="_method" value="DELETE" />
+                                            <button type="submit" class="dropdown-item text-danger">Xóa</button>
+                                        </form>
+                                        <form asp-action="cancel" asp-route-id="@item.RoomId" method="post" onsubmit="return confirm('Xác nhận còn phòng?');">
+                                            <input type="hidden" name="_method" value="DELETE" />
+                                            <button type="submit" class="dropdown-item text-warning">Xác nhận còn phòng</button>
+                                        </form>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+

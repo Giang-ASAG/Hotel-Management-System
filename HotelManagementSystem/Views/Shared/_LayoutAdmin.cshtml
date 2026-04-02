@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DH52110843_web_quan_ly_khach_san_homestay.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="thanh-tren">
+        <div class="logo">ODOLO</div>
+        <div class="dieu-huong">
+            <a asp-action="Index" asp-controller="Admin">Trang Chủ</a>
+            <a asp-action="Index" asp-controller="User">Người Dùng</a>
+            <a asp-action="dashboardPayment" asp-controller="Admin">Thống Kê</a>
+            <a asp-action="Reviews" asp-controller="Admin">Đánh Giá</a>
+        </div>
+        <div class="nguoi-dung dropdown">
+            <a href="#" class="dropdown-toggle" id="menuNguoiDung" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="~/user_8924549.png" alt="Ảnh đại diện" class="anh-dai-dien">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuNguoiDung">
+                <li>
+                    <span class="dropdown-item-text">
+                        👤 @(Context.Session.GetString("Name") ?? "Khách")
+                    </span>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a asp-controller="Auth" asp-action="Logout" class="dropdown-item">Đăng Xuất</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="noi-dung-chinh">
+            @RenderBody()
+        </div>
+    </div>
+
+    <footer class="bg-light text-center text-muted py-3 border-top">
+        <div class="container">
+            <p class="mb-1">Hệ thống quản lý khách sạn ODOLO</p>
+            <p class="mb-1">Được làm bởi Nguyễn Văn Giang</p>
+            <p class="mb-1">
+                SĐT: <a href="tel:0961719570" class="text-primary">0961719570</a> |
+                Email: <a href="mailto:dh52110843@student.stu.edu.vn" class="text-primary">dh52110843@student.stu.edu.vn</a>
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="https://facebook.com" target="_blank" class="text-primary" aria-label="Facebook">
+                    <i class="bi bi-facebook fs-4"></i>
+                </a>
+                <a href="https://instagram.com" target="_blank" class="text-primary" aria-label="Instagram">
+                    <i class="bi bi-instagram fs-4"></i>
+                </a>
+                <a href="https://google.com" target="_blank" class="text-primary" aria-label="Google">
+                    <i class="bi bi-google fs-4"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

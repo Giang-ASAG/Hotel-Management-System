@@ -1,0 +1,92 @@
+﻿@model IEnumerable<DH52110843_web_quan_ly_khach_san_homestay.Models.Hotel>
+
+@{
+    ViewData["Title"] = "listhotel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container mt-5">
+    @if (TempData["SuccessMessage"] != null)
+    {
+                 <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (ViewBag.Error != null)
+    {
+        <p style="color:red;">@ViewBag.Error</p>
+    }
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0">Khách Sạn</h2>
+        <a asp-controller="Hotel" class="btn btn-success" asp-action="formAdd">+ Thêm Mới</a>
+    </div>
+
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        Quản lý danh sách các khách sạn trong hệ thống.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Tên Khách Sạn</th>
+                    <th>Địa Chỉ</th>
+                    <th>Số hotline</th>
+                    <th>Địa chỉ email</th>
+                    <th>Số sao</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                    <th>Ngày cập nhật</th>
+                    <th>Hình ảnh</th>
+                    <th>Hành động</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.HotelName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                            <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td>
+                            @for (int i = 0; i < item.Star; i++)
+                            {
+                                <text>⭐</text>
+                            }
+                            </td>
+                        <td>@(item.Status == true ? "Hoạt động" : "Tạm ngưng")</td>
+                            <td>@item.CreatedAt?.ToShortDateString()</td>
+                            <td>@item.UpdatedAt?.ToShortDateString()</td>
+                            <td>
+                                @foreach(var i in item.HotelImages){
+                                    <img src="@i.Image.ImagePath" alt="Hình ảnh" class="rounded-circle img-fluid" style="width: 30px; height: 30px;"/>
+                            }
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                        Tùy
+                                        Chọn
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-route-id="@item.HotelId" asp-controller="Hotel" asp-action="formEdit">Chỉnh sửa</a></li>
+                                     <li>
+                                        <form asp-route-id="@item.HotelId" asp-controller="Hotel" asp-action="delete" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa khách sạn @item.HotelName này?');">
+                                            <input type="hidden" name="_method" value="DELETE" />
+                                            <button type="submit" class="dropdown-item text-danger">Xóa</button>
+                                        </form>
+                                     </li>
+                                </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+</div>

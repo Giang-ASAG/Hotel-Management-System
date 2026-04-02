@@ -1,0 +1,231 @@
+﻿@model IEnumerable<DH52110843_web_quan_ly_khach_san_homestay.Models.User>
+@using Newtonsoft.Json
+@using System.Collections.Generic
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var documentList = ViewBag.Document as List<UserDocument>;
+}
+
+<div class="container mt-5">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0">Quản Trị Viên</h2>
+        <a asp-action="formAdd" class="btn btn-success">+ Thêm Mới</a>
+    </div>
+
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        Chào mừng bạn đến với trang quản lý người dùng.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@*     Search *@
+    <div class="d-flex justify-content-between mb-3">
+        <input type="text" class="form-control w-25" placeholder="Tìm kiếm theo tên..." id="searchInput">
+    </div>
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-3" id="userTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-users" type="button" role="tab">Quản trị</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customers" type="button" role="tab">Khách hàng</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="partner-tab" data-bs-toggle="tab" data-bs-target="#partners" type="button" role="tab">Đối tác</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="partner-tab" data-bs-toggle="tab" data-bs-target="#request" type="button" role="tab">Yêu cầu trở thành đối tác</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="userTabsContent">
+        <!-- Tất cả -->
+        <div class="tab-pane fade show active" id="all-users" role="tabpanel">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle user-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Email</th>
+                            <th>Họ Tên</th>
+                            <th>Địa chỉ</th>
+                            <th>Số điện thoại</th>
+                            <th>Vai Trò</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(u => u.UserRoleId == 1))
+                        {
+                            @await Html.PartialAsync("UserRow", item)
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Khách hàng -->
+        <div class="tab-pane fade" id="customers" role="tabpanel">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Email</th>
+                            <th>Họ Tên</th>
+                            <th>Địa chỉ</th>
+                            <th>Số điện thoại</th>
+                            <th>Vai Trò</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(u => u.UserRoleId == 2))
+                        {
+                            @await Html.PartialAsync("UserRow", item)
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Đối tác -->
+        <div class="tab-pane fade" id="partners" role="tabpanel">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Email</th>
+                            <th>Họ Tên</th>
+                            <th>Địa chỉ</th>
+                            <th>Số điện thoại</th>
+                            <th>Vai Trò</th>
+                            <th>Hoạt động</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(u => u.UserRoleId == 3))
+                        {
+                            @await Html.PartialAsync("UserRow", item)
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Yêu cầu -->
+        <div class="tab-pane fade" id="request" role="tabpanel">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Email</th>
+                            <th>Họ Tên</th>
+                            <th>Số điện thoại</th>
+                            <th>Vai Trò</th>
+                            <th>Trạng thái</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in documentList.OrderBy(doc => doc.Active).ToList())
+                        {
+                            <tr>
+                                <td>@(item.User?.Email ?? "Không có")</td>
+                                <td>@(item.User?.FullName ?? "Không có")</td>
+                                <td>@(item.User?.PhoneNumber ?? "Không có")</td>
+
+                                <td>
+                                    @{
+                                        if (item.User?.UserRoleId == 3)
+                                        {
+                                            @:Đối tác
+                                        }
+                                        else if (item.User?.UserRoleId == 2)
+                                        {
+                                            @:Khách hàng
+                                        }
+                                        else
+                                        {
+                                            @:Quản trị viên
+                                        }
+                                    }
+                                </td>
+
+                                <td>
+                                    @{
+                                        if (item.Active == 0)
+                                        {
+                                            @:Đang chờ
+                                        }
+                                        else if (item.Active == 1)
+                                        {
+                                            @:Đã duyệt
+                                        }
+                                        else
+                                        {
+                                            @:Từ chối
+                                        }
+                                    }
+                                </td>
+
+                                <td>
+                                    @{
+                                        if (item.Active == 0)
+                                        {
+                                            <div class="d-flex gap-1">
+                                                <form asp-action="updateActive" asp-route-email="@item.User!.Email" asp-route-id="@item.UserId" asp-route-num="1" method="post"
+                                                      onsubmit="return confirm('Bạn có chắc chắn muốn duyệt người dùng này?');"
+                                                      class="d-inline">
+                                                    <button type="submit" class="btn btn-success btn-sm">Duyệt</button>
+                                                </form>
+
+                                                <form asp-action="updateActive" asp-route-email="@item.User!.Email" asp-route-id="@item.UserId" asp-route-num="2" method="post"
+                                                      onsubmit="return confirm('Bạn có chắc chắn muốn từ chối người dùng này?');"
+                                                      class="d-inline ms-2">
+                                                    <!-- ms-2: margin-start để cách nút trước -->
+                                                    <button type="submit" class="btn btn-danger btn-sm">Từ chối</button>
+                                                </form>
+                                            </div>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.getElementById("searchInput");
+
+            searchInput.addEventListener("input", function () {
+                const searchTerm = this.value.toLowerCase();
+
+                // Lặp qua tất cả các bảng trong từng tab
+                const tables = document.querySelectorAll(".tab-pane.active table");
+
+                tables.forEach(table => {
+                    const rows = table.querySelectorAll("tbody tr");
+
+                    rows.forEach(row => {
+                        const rowText = row.innerText.toLowerCase();
+                        row.style.display = rowText.includes(searchTerm) ? "" : "none";
+                    });
+                });
+            });
+        });
+    </script>
+}

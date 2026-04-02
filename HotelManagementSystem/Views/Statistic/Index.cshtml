@@ -1,0 +1,91 @@
+﻿@model DH52110843_web_quan_ly_khach_san_homestay.DTO.HotelStatisticViewModel
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Hotel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        Chọn một khách sạn để xem đánh giá.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Tên Khách Sạn</th>
+                    <th>Địa Chỉ</th>
+                    <th>Số hotline</th>
+                    <th>Địa chỉ email</th>
+                    <th>Số sao</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Hotels)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.HotelName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                        <td>
+                            @for (int i = 0; i < item.Star; i++)
+                            {
+                                <text>⭐</text>
+                            }
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" asp-route-id="@item.HotelId" asp-action="Statistics">Xem thống kê</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="mt-5">Biểu đồ tổng doanh thu theo tháng</h2>
+    <canvas id="revenueChart" height="100"></canvas>
+    <a class="btn btn-success mb-3" href="@Url.Action("ExportToExcelbyIdUser", "Statistic")">
+        Xuất Excel
+    </a>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const revenueData = @Html.Raw(JsonConvert.SerializeObject(Model.MonthlyRevenue));
+
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                    'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: revenueData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return value.toLocaleString('vi-VN') + ' ₫';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

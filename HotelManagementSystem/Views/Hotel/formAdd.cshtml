@@ -1,0 +1,193 @@
+﻿@model DH52110843_web_quan_ly_khach_san_homestay.DTO.HotelDTO
+
+@{
+    ViewData["Title"] = "formAdd";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container mt-4">
+    <h2>Thêm Khách Sạn</h2>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    @if (TempData["ImageSuccessMessage"] != null)
+    {
+                 <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["ImageSuccessMessage"]
+        </div>
+    }
+    @if (TempData["ImageErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ImageErrorMessage"]
+        </div>
+    }
+    <form method="post" asp-action="addHotel" enctype="multipart/form-data" onsubmit="return confirm('Bạn có chắc chắn muốn thêm khách sạn này không?');">
+        <div class="mb-3" style="display:none">
+            <label asp-for="HotelId" class="control-label"></label>
+            <input asp-for="HotelId" class="form-control" />
+            <span asp-validation-for="HotelId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="HotelName" class="control-label">Tên Khách sạn</label>
+            <input asp-for="HotelName" class="form-control" />
+            <span asp-validation-for="HotelName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="PhoneNumber" class="control-label"> Số điện thoại</label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="control-label">Địa chỉ Email</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Address" class="control-label">Địa chỉ: </label>
+            <input asp-for="Address" type="text" id="addressInput" class="form-control" autocomplete="off" required placeholder="Vui lòng nhập địa chỉ" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+            <ul id="suggestionsList" class="list-group" style="display:none;"></ul>
+        </div>
+        <div class="mb-3"  style="display:none">
+            <label asp-for="XCoordinate">Tọa độ vĩ độ (Latitude):</label>
+            <input asp-for="XCoordinate" type="text" id="latInput" class="form-control" readonly hidden />
+        </div>
+
+        <div class="mb-3" style="display:none">
+            <label asp-for="XCoordinate">Tọa độ kinh độ (Longitude):</label>
+            <input asp-for="YCoordinate" type="text" id="lngInput" class="form-control" readonly hidden />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Star" class="control-label"> Số sao</label>
+            <select asp-for="Star" class="form-control">
+                <option value="">-- Chọn số sao --</option>
+                <option value="1">⭐</option>
+                <option value="2">⭐⭐</option>
+                <option value="3">⭐⭐⭐</option>
+                <option value="4">⭐⭐⭐⭐</option>
+                <option value="5">⭐⭐⭐⭐⭐</option>
+            </select>
+            <span asp-validation-for="Star" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="control-label">Mô tả</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="anhKhachSan" class="form-label">Hình Ảnh</label>
+            <div id="previewContainer" class="mb-2 d-flex flex-wrap"></div>
+            <input class="form-control" type="file" id="anhKhachSan" asp-for="Images" name="Images" accept="image/*" multiple />
+            <div class="note">Chọn một hoặc nhiều ảnh khách sạn.</div>
+        </div>
+
+        <div class="form-actions mt-4 text-center">
+            <button type="submit" class="btn btn-primary me-2">Lưu</button>
+            <a asp-action="listhotel" asp-controller="Home" class="btn btn-secondary me-2">Quay lại danh sách</a>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.getElementById('anhKhachSan').addEventListener('change', function (e) {
+            const files = e.target.files;
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = '';
+
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.classList.add('preview-image'); // Add a class for styling
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#addressInput').on('input', function () {
+                const input = $(this).val();
+                const $suggestionsList = $('#suggestionsList');
+
+                if (input.length > 2) {
+                    $.getJSON('/Hotel/GetAddressSuggestions', { input })
+                        .done(data => {
+                            $suggestionsList.empty().toggle(!!data.length);
+                            data.forEach(item => {
+                                $suggestionsList.append(
+                                    `<li class="list-group-item suggestion-item" data-place-id="${item.place_id}">${item.description}</li>`
+                                );
+                            });
+                        })
+                        .fail(() => {
+                            $suggestionsList.hide();
+                            console.error('Error fetching suggestions');
+                        });
+                } else {
+                    $suggestionsList.hide();
+                }
+            });
+
+            $(document).on('click', '.suggestion-item', function (e) {
+                e.stopPropagation();
+                const $this = $(this);
+                $('#addressInput').val($this.text());
+                $('#suggestionsList').hide();
+
+                $.getJSON('/Hotel/GetPlaceDetail', { placeId: $this.data('place-id') })
+                    .done(data => {
+                        $('#latInput').val(data.lat);
+                        $('#lngInput').val(data.lng);
+                    })
+                    .fail(() => {
+                        $('#latInput').val('');
+                        $('#lngInput').val('');
+                        console.error('Error fetching place details');
+                    });
+            });
+
+            $(document).on('click', () => $('#suggestionsList').hide());
+        });
+    </script>
+}
+
+<style>
+    #suggestionsList {
+        position: absolute;
+        z-index: 1000;
+        width: calc(100% - 1rem);
+    }
+
+    .suggestion-item {
+        cursor: pointer;
+    }
+</style>
+
+
+

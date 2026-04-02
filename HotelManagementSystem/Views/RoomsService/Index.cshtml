@@ -1,0 +1,91 @@
+﻿@model IEnumerable<DH52110843_web_quan_ly_khach_san_homestay.Models.RoomsService>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var roomtype = ViewBag.RT as RoomType;
+}
+
+<div class="container mt-5">
+    <div class="main">
+        @if (TempData["SuccessMessage"] != null)
+        {
+                     <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <!-- Tiêu đề trang và hành động -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+                <a asp-action="Index" asp-controller="RoomType" asp-route-id="@roomtype.HotelId" class="btn btn-secondary">
+                    ← Quay lại
+                </a>
+                <h2 class="page-title m-0">Quản Lý Phòng Khách Sạn</h2>
+            </div>
+
+            <div>
+                <a asp-action="formAdd" asp-route-id="@roomtype.RoomTypeId">
+                    <button class="btn btn-success">+ Thêm mới</button>
+                </a>
+            </div>
+        </div>
+
+
+        <!-- Thông báo -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            Chào mừng bạn đến với bảng quản lý dịch vụ phòng.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+        </div>
+
+
+        <!-- Bảng dữ liệu -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Loại phòng</th>
+                        <th>Tên dịch vụ</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @item.RoomType.TypeName
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ServiceName)
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        Tùy
+                                        Chọn
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="RoomsService" asp-route-id="@item.ServiceId" asp-action="formEdit">Chỉnh sửa</a></li>
+                                        <li>
+                                            <form asp-controller="RoomsService" asp-action="delete" asp-route-roomtypeId="@roomtype.RoomTypeId" asp-route-id="@item.ServiceId" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa dịch vụ này?');">
+                                                <input type="hidden" name="_method" value="DELETE" />
+                                                <button type="submit" class="dropdown-item text-danger">Xóa</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+

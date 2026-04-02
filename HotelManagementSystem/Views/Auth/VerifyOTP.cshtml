@@ -1,0 +1,139 @@
+﻿@model DH52110843_web_quan_ly_khach_san_homestay.DTO.VerifyOTP
+@{
+    Layout = null;
+    ViewBag.Title = "Xác thực OTP";
+    var email = TempData["EmailOTP"] as string;
+    var otpVerified = TempData["OtpVerified"] != null && (bool)TempData["OtpVerified"];
+
+}
+
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <title>Xác thực OTP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        @if (otpVerified)
+                        {
+                            ViewBag.Title = "Đăng ký";
+                            <h4>Đăng ký</h4>
+                        }
+                        else
+                        {
+                            <h4>Xác thực OTP</h4>
+                        }
+
+                    </div>
+                    <div class="card-body">
+                        @* Thông báo *@
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div id="otpSuccessMsg" class="alert alert-success">
+                                @TempData["SuccessMessage"]
+                            </div>
+                        }
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                        }
+                        @if (otpVerified)
+                        {
+                            <form asp-action="RegisterWithPassword" method="POST" class="mt-4">
+                                <div class="form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="email" name="email" class="form-control" placeholder="Nhập email" value="@email" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Mật khẩu:</label>
+                                    <input type="password" class="form-control" name="password" placeholder="Nhập mật khẩu" required minlength="9" />
+                                    <small class="form-text text-muted">Mật khẩu phải lớn hơn 8 ký tự.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Xác nhận mật khẩu:</label>
+                                    <input type="password" class="form-control" name="ConfirmPassword" placeholder="Nhập lại mật khẩu" required />
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Hoàn tất đăng ký</button>
+                            </form>
+                        }
+                        else
+                        {
+                            @* Gửi OTP *@
+                            <form asp-action="SendOTP" id="sendOtp" method="post" class="mb-4">
+                                <div class="form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="email" class="form-control" placeholder="Nhập email" asp-for="Email" value="@ViewBag.Email" required>
+                                </div>
+                                <button type="submit" id="sendOtpBtn" class="btn btn-primary btn-block">Gửi OTP</button>
+                            </form>
+
+                            @* Nhập mã OTP *@
+
+                            <form asp-action="verifyOTP" id="verifyOTP" method="POST" style="display:none">
+                                <div class="form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="email" class="form-control" placeholder="Nhập email" asp-for="Email" value="@ViewBag.Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="otp">Mã OTP:</label>
+                                    <input type="text" class="form-control" asp-for="Otp" placeholder="Nhập mã OTP" required>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-block">Xác thực</button>
+                            </form>
+
+
+                            <div id="countdown" class="text-center text-success font-weight-bold" style="display: none; font-size: 14px; margin-top: 20px;"></div>
+
+                        }
+                    </div>
+                    <div class="card-footer text-center">
+                        <small>Đã có tài khoản? <a href="/auth/login">Đăng nhập</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.onload = function () {
+            const successMsg = document.getElementById("otpSuccessMsg");
+            const sendOtpForm = document.getElementById("sendOtp");
+            const verifyOTPForm = document.getElementById("verifyOTP");
+            const countdownEl = document.getElementById("countdown");
+
+            if (successMsg) {
+                verifyOTPForm.style.display = "block";
+                sendOtpForm.style.display = "none";
+                countdownEl.style.display = "block";
+
+                let timeLeft = 300; // 5 phút
+
+                const timer = setInterval(() => {
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        verifyOTPForm.style.display = "none";
+                        sendOtpForm.style.display = "block";
+                        countdownEl.style.display = "none";
+                    } else {
+                        const minutes = Math.floor(timeLeft / 60);
+                        const seconds = timeLeft % 60;
+                        countdownEl.textContent = `Thời gian còn lại: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        timeLeft--;
+                    }
+                }, 1000);
+            }
+        };
+    </script>
+
+</body>
+</html>
+

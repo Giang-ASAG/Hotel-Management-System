@@ -1,0 +1,85 @@
+﻿@model IEnumerable<DH52110843_web_quan_ly_khach_san_homestay.Models.Review>
+
+@{
+    ViewData["Title"] = "Reviews";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    var selectedStar = Context.Request.Query["star"];
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <form method="get" asp-action="Reviews" class="d-flex align-items-end">
+            <label for="star" class="me-2 mb-0">Lọc:</label>
+            <select id="star" name="star" class="form-select me-2" onchange="this.form.submit()">
+                <option value="">Tất cả</option>
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <option value="@i" selected="@(selectedStar == i.ToString() ? "selected" : null)">
+                        @i sao
+                    </option>
+                }
+            </select>
+        </form>
+    </div>
+
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        Xem đánh giá.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="table-responsive">
+        @if (Model.Any())
+        {
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Khách sạn</th>
+                        <th>Khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Đánh giá</th>
+                        <th>Số sao</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Hotel?.HotelName</td>
+                            <td>@item.User?.FullName</td>
+                            <td>@item.User?.PhoneNumber</td>
+                            <td>@item.Description</td>
+                            <td>
+                                @for (int i = 0; i < item.StarRating; i++)
+                                {
+                                    <text>⭐</text>
+                                }
+                            </td>
+                            <td>
+                                <form asp-action="delete" asp-route-id="@item.ReviewId" asp-route-star="@item.StarRating" method="post"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?');">
+                                    <input type="hidden" name="_method" value="DELETE" />
+                                    <button type="submit" class="btn btn-danger">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-warning text-center">
+                Không có đánh giá nào phù hợp với bộ lọc.
+            </div>
+        }
+    </div>
+</div>

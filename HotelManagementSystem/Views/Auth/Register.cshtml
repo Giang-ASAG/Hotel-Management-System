@@ -1,0 +1,116 @@
+﻿
+@model DH52110843_web_quan_ly_khach_san_homestay.Models.UserDocument
+
+@{
+    Layout = null;
+    ViewBag.Title = "Đăng ký";
+}
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <title>Đăng ký đối tác</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h4>Đăng ký trở thành đối tác</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="AddDocument" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input type="hidden" name="UserId" class="form-control" value="@Model.User?.UserId" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Email:</label>
+                                <input type="email" asp-for="User.Email" class="form-control" name="email" value="@Model.User?.Email" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Họ và tên:</label>
+                                <input type="text" class="form-control" name="name" value="@Model.User?.FullName" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Số điện thoại:</label>
+                                <input type="tel" class="form-control" name="sdt" value="@Model.User?.PhoneNumber" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Địa chỉ:</label>
+                                <input type="text" class="form-control" name="address" value="@Model.User?.Address" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>CCCD:</label>
+                                    <input type="text" class="form-control"  name="CccdNumber" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Mã số thuế:</label>
+                                    <input type="text" class="form-control"  name="TaxCode">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Số tài khoản ngân hàng:</label>
+                                    <input type="text" class="form-control"  name="BankAccountNumber" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Tên ngân hàng:</label>
+                                    <input type="text" class="form-control" name="BankName" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Ảnh của giấy phép kinh doanh:</label>
+                                <input type="file" class="form-control-file" name="ImageBase64" asp-for="ImageBase64" accept="image/*" required>
+                            </div>
+
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="agreeTerms">
+                                <label class="form-check-label" for="agreeTerms">
+                                    Tôi đồng ý với <a href="#" id="showTerms">điều khoản hợp tác</a>
+                                </label>
+                            </div>
+
+                            <div id="termsContent" class="alert alert-secondary" style="display:none;">
+                                <p><strong>Điều khoản hợp tác:</strong></p>
+                                <ul>
+                                    <li>Tuân thủ các quy định của nền tảng.</li>
+                                    <li>Không đăng tải thông tin sai lệch hoặc gian lận.</li>
+                                    <li>Cam kết cung cấp thông tin chính xác, minh bạch.</li>
+                                    <li>Đồng ý chia sẻ hoa hồng.</li>
+                                    <li>Chịu trách nhiệm pháp lý về nội dung và thông tin cung cấp.</li>
+                                </ul>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-block">Xác nhận</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("showTerms").addEventListener("click", function (e) {
+            e.preventDefault();
+            const terms = document.getElementById("termsContent");
+            terms.style.display = terms.style.display === "none" ? "block" : "none";
+        });
+
+        document.querySelector("form").addEventListener("submit", function (e) {
+            if (!document.getElementById("agreeTerms").checked) {
+                alert("Bạn cần đồng ý với điều khoản hợp tác trước khi đăng ký.");
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

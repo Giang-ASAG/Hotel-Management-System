@@ -1,0 +1,160 @@
+﻿@model IEnumerable<DH52110843_web_quan_ly_khach_san_homestay.Models.RoomType>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int hotelId = (int)ViewBag.HotelId;
+}
+
+<div class="container mt-5">
+    <div class="main">
+        @if (TempData["SuccessMessage"] != null)
+        {
+                     <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+        @if (TempData["ImageSuccessMessage"] != null)
+        {
+                     <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["ImageSuccessMessage"]
+            </div>
+        }
+        @if (TempData["ImageErrorMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["ImageErrorMessage"]
+            </div>
+        }
+        <!-- Tiêu đề và nút thêm mới -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a asp-action="Hotels" asp-controller="RoomType" class="btn btn-secondary">← Quay lại</a>
+            </div>
+            <h2 class="page-title m-0">Quản Lý Phòng Khách Sạn</h2>
+            <div>
+                <a asp-action="formAdd" asp-route-hotel="@hotelId"><button class="btn btn-success me-2">+ Thêm mới</button></a>
+            </div>
+        </div>
+
+        <!-- Thông báo -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            Đây là danh sách các phòng trong khách sạn.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+        </div>
+
+
+        <!-- Bảng dữ liệu -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Khách sạn</th>
+                        <th scope="col">Loại phòng</th>
+                        <th scope="col">Giá (VND)</th>
+                        <th scope="col">Sức chứa</th>
+                        <th scope="col">Số lượng phòng</th>
+                        <th scope="col">Hình ảnh</th>
+                        <th scope="col">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @item.Hotel.HotelName
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TypeName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Price)
+                            </td>
+
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Capacity)
+                            </td>
+                            <td>
+                                @item.Rooms.Count
+                            </td>
+                            <td>
+                                @foreach(var i in item.RoomImages){
+                                    <img src="@i.Image.ImagePath" alt="Hình ảnh" class="rounded-circle img-fluid" style="width: 40px; height: 40px; object-fit: cover;" />
+                                }
+                            </td>
+
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                        Tùy
+                                        Chọn
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                       @*  <li><a class="dropdown-item" asp-controller="Room" asp-route-id="@item.RoomTypeId" asp-action="ListRoom">Danh sách phòng</a></li> *@
+                                        <li><a class="dropdown-item text-info" asp-route-id="@item.RoomTypeId" asp-controller="Room" asp-action="Index">Xem phòng</a></li>
+                                        <li><a class="dropdown-item text-warning" asp-route-id="@item.RoomTypeId" asp-controller="RoomsService" asp-action="Index">Xem dịch vụ phòng</a></li>
+                                        <li><a class="dropdown-item" asp-route-id="@item.RoomTypeId" asp-action="formEdit">Chỉnh sửa</a></li>
+                                        <form asp-controller="RoomType" asp-action="delete" asp-route-hotel="@item.HotelId" asp-route-id="@item.RoomTypeId" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa dịch vụ này?');">
+                                            <input type="hidden" name="_method" value="DELETE" />
+                                            <button type="submit" class="dropdown-item text-danger">Xóa</button>
+                                        </form>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+@* <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoomTypeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoomInfo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Capacity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HotelId)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+    }
+</tbody>
+ *@

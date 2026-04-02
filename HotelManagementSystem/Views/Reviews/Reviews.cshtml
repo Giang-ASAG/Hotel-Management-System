@@ -1,0 +1,60 @@
+﻿@model IEnumerable<DH52110843_web_quan_ly_khach_san_homestay.DTO.ReviewDTO>
+
+@{
+    ViewData["Title"] = "Reviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a asp-action="Index" asp-controller="Reviews" class="btn btn-secondary">← Quay lại</a>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0">Đánh giá</h2>
+    </div>
+
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        Xem đánh giá.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="table-responsive">
+        @if (Model.Count() > 0)
+        {
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Đánh giá</th>
+                        <th>Số sao</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Username</td>
+                            <td>@item.sdt</td>
+                            <td>@item.Description</td>
+                            <td>
+                                @for (int i = 0; i < item.StarRating; i++)
+                                {
+                                    <text>⭐</text>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="m-0">Không có đánh giá nào</h2>
+            </div>
+        }
+
+    </div>
+</div>

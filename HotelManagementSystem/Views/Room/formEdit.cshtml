@@ -1,0 +1,73 @@
+﻿@model DH52110843_web_quan_ly_khach_san_homestay.Models.Room
+
+@{
+    ViewData["Title"] = "formEdit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var id = ViewContext.RouteData.Values["a"];
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary">Chỉnh sửa phòng</h2>
+    <form asp-action="update" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn lưu dịch vụ này không?');">
+        <div class="form-group" style="display:none">
+            <label asp-for="RoomId" class="control-label"></label>
+            <input asp-for="RoomId" class="form-control" />
+            <span asp-validation-for="RoomId" class="text-danger"></span>
+        </div>
+
+            @if (ViewBag.DSRT!=null )
+            {
+                <div class="form-group mb-3">
+                <label class="form-label">Loại phòng</label>
+                <select asp-for="RoomTypeId" asp-items="@ViewBag.DSRT" class="form-select"></select>
+                <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <div class="form-group mb-3" style="display:none">
+                <label asp-for="RoomTypeId" class="control-label"></label>
+                <input asp-for="RoomTypeId" class="form-control" requied />
+                <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+                </div>
+            }
+
+        <div class="form-group mb-3">
+            <label asp-for="RoomNumber" class="control-label">Số phòng</label>
+            <input asp-for="RoomNumber" class="form-control" requied />
+            <span asp-validation-for="RoomNumber" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="Active" class="control-label">Tình Trạng</label>
+            <select asp-for="Active" class="form-control">
+                <option value="false">Bảo trì</option>
+                <option value="true">Hoạt động</option>
+            </select>
+            <span asp-validation-for="Active" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="Status" class="control-label">Trạng thái</label>
+            <select asp-for="Status" class="form-control">
+                <option value="false">Còn phòng</option>
+                <option value="true">Đã đặt</option>
+            </select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+
+
+        <!-- Nút hành động -->
+        <div class="form-actions mt-4 text-center">
+            <button type="submit" class="btn btn-primary me-2">Lưu</button>
+            @if (ViewBag.DSRT != null)
+            {
+                <a asp-action="Index" asp-route-id=@id class="btn btn-secondary">Hủy</a>
+            }
+            else
+            {
+                <a asp-action="ListRoom" asp-route-id=@Model.RoomTypeId class="btn btn-secondary">Hủy</a>
+            }
+
+        </div>
+    </form>
+</div>
+

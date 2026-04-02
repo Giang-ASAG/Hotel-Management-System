@@ -1,0 +1,114 @@
+﻿@model DH52110843_web_quan_ly_khach_san_homestay.Models.User
+
+<tr>
+    <td>@Model.Email</td>
+    <td>@(Model.FullName ?? "Không có")</td>
+    <td>@(Model.Address ?? "Không có")</td>
+    <td>@(Model.PhoneNumber ?? "Không có")</td>
+    <td> 
+        @{
+            string roleText;
+            string roleClass;
+
+            switch (Model.UserRoleId)
+            {
+                case 1:
+                    roleText = "Quản trị viên";
+                    roleClass = "bg-danger"; // Đỏ
+                    break;
+                case 2:
+                    roleText = "Khách hàng";
+                    roleClass = "bg-primary"; // Xám
+                    break;
+                case 3:
+                    roleText = "Đối tác";
+                    roleClass = "bg-success"; // Xanh lá
+                    break;
+                default:
+                    roleText = "Không xác định";
+                    roleClass = "bg-dark";
+                    break;
+            }
+
+        }
+
+        <span class="badge @roleClass">
+            @roleText
+        </span>
+
+    </td>
+    @if (Model.UserRoleId == 2)
+    {
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    Tùy chọn
+                </button>
+                <ul class="dropdown-menu">
+                    <form asp-action="UpdatePermission" asp-controller="User" asp-route-id="@Model.UserId" method="post"
+                          onsubmit="return confirm('Bạn có chắc chắn muốn chỉnh quyền người dùng này thành Đối tác?');">
+                        <button type="submit" class="dropdown-item text-warning">Duyệt đối tác</button>
+                    </form>
+                    <li><a class="dropdown-item" asp-route-id="@Model.UserId" asp-action="formEdit">Chỉnh sửa</a></li>
+                    <li>
+                        <form asp-action="delete" asp-route-id="@Model.UserId" method="post"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">
+                            <input type="hidden" name="_method" value="DELETE" />
+                            <button type="submit" class="dropdown-item text-danger">Xóa</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    }
+    else if (Model.UserRoleId == 3)
+    {
+        <td>@(Model.Active == true ? "Đang hoạt động" : "Không hoạt động")</td>
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    Tùy chọn
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item text-secondary" asp-route-id="@Model.UserId" asp-controller="Hotel" asp-action="listhotel">Xem khách sạn</a></li>
+                    @if(Model.Active==true){
+                        <form asp-action="Active" asp-controller="User" asp-route-active="false" asp-route-id="@Model.UserId" method="post"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn tắt hoạt động người này?');">
+                            <button type="submit" class="dropdown-item text-warning">Tắt hoạt động</button>
+                        </form>
+
+                    }
+                    else
+                    {
+                        <form asp-action="Active" asp-route-active="true" asp-controller="User" asp-route-id="@Model.UserId" method="post"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn mở hoạt động người này?');">
+                            <button type="submit" class="dropdown-item text-warning">Mở hoạt động</button>
+                        </form>
+                    }
+                    <li><a class="dropdown-item" asp-route-id="@Model.UserId" asp-action="formEdit">Chỉnh sửa</a></li>
+                    <li>
+                        <form asp-action="delete" asp-route-id="@Model.UserId" method="post"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">
+                            <input type="hidden" name="_method" value="DELETE" />
+                            <button type="submit" class="dropdown-item text-danger">Xóa</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    }
+    else
+    {
+        <td>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    Tùy chọn
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" asp-route-id="@Model.UserId" asp-action="formEdit">Chỉnh sửa</a></li>
+                </ul>
+            </div>
+        </td>
+    }
+
+</tr>

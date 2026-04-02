@@ -1,0 +1,111 @@
+﻿@model DH52110843_web_quan_ly_khach_san_homestay.DTO.RoomTypeDTO
+
+@{
+    ViewData["Title"] = "formAdd";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var hotel = ViewBag.DSKS as Hotel;
+}
+
+
+
+<div class="container mt-4">
+    <h2>Thêm Loại Phòng</h2>
+    @if (TempData["SuccessMessage"] != null)
+    {
+                 <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    @if (TempData["ImageSuccessMessage"] != null)
+    {
+                 <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["ImageSuccessMessage"]
+        </div>
+    }
+    @if (TempData["ImageErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ImageErrorMessage"]
+        </div>
+    }
+    <form id="editRoomForm" method="post" asp-action="addRoomType" enctype="multipart/form-data" onsubmit="return confirm('Bạn có chắc chắn muốn thêm loại phòng này không?');">
+        <div class="mb-3" style="display:none">
+            <label class="control-label">Loại Phòng</label>
+            <input asp-for="RoomTypeId" class="form-control" value="0" />
+            <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="control-label">Tên loại Phòng</label>
+            <input asp-for="TypeName" class="form-control" required />
+            <span asp-validation-for="TypeName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="control-label">Giá tiền</label>
+            <input asp-for="Price" class="form-control" required />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+@*         <div class="mb-3">
+            <label class="form-label">Khách sạn</label>
+            <select asp-for="HotelId" asp-items="@ViewBag.DSKS" class="form-select"></select>
+            <span asp-validation-for="HotelId" class="text-danger"></span>
+        </div> *@
+        <div class="mb-3">
+            <label class="control-label">Khách sạn</label>
+            <!-- Input hidden dùng để submit HotelId -->
+            <input asp-for="HotelId" class="form-control" value="@hotel.HotelId" readonly hidden />
+            <!-- Input readonly hiển thị tên khách sạn cho người xem -->
+            <input class="form-control" value="@hotel?.HotelName" readonly />
+            <span asp-validation-for="HotelId" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="control-label">Sức chứa</label>
+            <input asp-for="Capacity" class="form-control" required />
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="control-label">Mô tả phòng</label>
+            <textarea class="form-control" id="description" asp-for="RoomInfo" rows="4" required></textarea>
+            <span asp-validation-for="RoomInfo" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label for="anhKhachSan" class="form-label">Hình Ảnh Loại Phòng</label>
+            <div id="previewContainer" class="mb-2 d-flex flex-wrap"></div>
+            <input class="form-control" type="file" id="anhKhachSan" asp-for="Images" name="Images" accept="image/*" multiple />
+            <div class="note">Chọn một hoặc nhiều ảnh.</div>
+        </div>
+        <div class="form-actions mt-4 text-center">
+            <button type="submit" class="btn btn-primary me-2">Lưu</button>
+            <a asp-action="Index" asp-route-id="@hotel?.HotelId" class="btn btn-secondary me-2">Quay lại danh sách</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('anhKhachSan').addEventListener('change', function (e) {
+            const files = e.target.files;
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = '';
+
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.classList.add('preview-image'); // Add a class for styling
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+}
+
