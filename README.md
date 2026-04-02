@@ -1,4 +1,4 @@
-# 🏨 Hotel Management System
+# Web Hotel Management System
 
 A full-stack hotel booking and management system including a mobile application and a web-based admin panel. The system allows users to browse and book hotels, while administrators can manage hotels, rooms, and bookings efficiently.
 
